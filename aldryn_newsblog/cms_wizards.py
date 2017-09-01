@@ -64,7 +64,7 @@ class CreateNewsBlogArticleForm(BaseFormMixin, TranslatableModelForm):
     TranslatableModelForm
     """
 
-    content = forms.CharField(
+    content_article = forms.CharField(
         label=_('Content'),
         required=False,
         widget=TextEditorWidget,
@@ -76,7 +76,7 @@ class CreateNewsBlogArticleForm(BaseFormMixin, TranslatableModelForm):
 
     class Meta:
         model = Article
-        fields = ['title', 'app_config', 'content']
+        fields = ['title', 'app_config', "content_article"]
         # The natural widget for app_config is meant for normal Admin views and
         # contains JS to refresh the page on change. This is not wanted here.
         widgets = {'app_config': forms.Select()}
@@ -97,10 +97,10 @@ class CreateNewsBlogArticleForm(BaseFormMixin, TranslatableModelForm):
         # Set owner to current user
         article.owner = self.user
 
-        # If 'content' field has value, create a TextPlugin with same and add
+        # If 'content_article' field has value, create a TextPlugin with same and add
         # it to the PlaceholderField
-        content = clean_html(self.cleaned_data.get('content', ''), False)
-        if content and permissions.has_plugin_permission(
+        content_article = clean_html(self.cleaned_data.get('content_article', ''), False)
+        if content_article and permissions.has_plugin_permission(
                 self.user, 'TextPlugin', 'add'):
 
             # If the article has not been saved, then there will be no
@@ -114,7 +114,7 @@ class CreateNewsBlogArticleForm(BaseFormMixin, TranslatableModelForm):
                     placeholder=article.content,
                     plugin_type='TextPlugin',
                     language=self.language_code,
-                    body=content,
+                    body=content_article,
                 )
 
         with transaction.atomic():
